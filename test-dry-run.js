@@ -16,7 +16,7 @@ async function dryRun() {
     horoscopeDate: '03-08',
     festivals: [
       { name: '小宝宝阳历生日', date: '03-08' },
-      { name: '朝勃阳历生日', date: '11-20' }
+      { name: '大宝宝阳历生日', date: '11-20' }
     ],
     customizedDateList: [
       { keyword: 'love_day', date: '2025-04-06' }

@@ -5,7 +5,7 @@ const { buildMessagePayload } = require('./src/services/message-builder');
 
 async function main() {
   console.log('====================================================');
-  console.log('🌸 朝勃 × 小宝宝 早安微信推送自动化引擎启动...');
+  console.log('🌸 大宝宝 × 小宝宝 早安微信推送自动化引擎启动...');
   console.log('====================================================');
 
   // 1. 检查必要凭据

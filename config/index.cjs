@@ -1,6 +1,6 @@
 /**
  * ===================================================
- *  🌸 朝勃 × 小宝宝 专属早安推送配置
+ *  🌸 大宝宝 × 小宝宝 专属早安推送配置
  *  项目: wechat-push-chaobo-custom
  *  深度适我化配置
  * ===================================================
@@ -60,7 +60,7 @@ module.exports = {
         },
         {
           type: 'Birthday',
-          name: '朝勃阳历生日',
+          name: '大宝宝阳历生日',
           year: '2002',
           date: '11-20',
           isLunar: false
@@ -73,7 +73,7 @@ module.exports = {
   ],
 
   // ============ 状态回执通知 ============
-  // 推送完成后向朝勃自己推送一条状态回执
+  // 推送完成后向大宝宝自己推送一条状态回执
   CALLBACK_TEMPLATE_ID: process.env.CALLBACK_TEMPLATE_ID || '',
   CALLBACK_USERS: [process.env.ADMIN_USER_OPENID || '']
 };
