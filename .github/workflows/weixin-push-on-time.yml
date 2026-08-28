@@ -1,0 +1,37 @@
+name: 'Weixin Push On Time (朝勃 × 小宝宝)'
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  schedule:
+    # 采用 UTC 时间: 每天 UTC 23:05 触发 = 北京时间 (UTC+8) 次日清晨 07:05
+    - cron: '5 23 * * *'
+  # 支持在 GitHub 网页 Actions 页面手动点击触发测试
+  workflow_dispatch:
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Execute Push Script
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          TIAN_API_KEY: ${{ secrets.TIAN_API_KEY }}
+          TARGET_USER_OPENID: ${{ secrets.TARGET_USER_OPENID }}
+          MINIPROGRAM_APPID: ${{ secrets.MINIPROGRAM_APPID }}
+        run: npm run start
