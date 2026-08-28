@@ -9,14 +9,14 @@
 module.exports = {
   // ============ 微信测试号凭证 ============
   // 获取途径: https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login
-  APP_ID: process.env.APP_ID || '${TODO: 填入你的测试号 AppID}',
-  APP_SECRET: process.env.APP_SECRET || '${TODO: 填入你的测试号 AppSecret}',
+  APP_ID: process.env.APP_ID || 'wx2a24d755841b8137',
+  APP_SECRET: process.env.APP_SECRET || '1653c3fb53933b7d1103d85add07574d',
 
-  // ============ 小程序联动配置（可选） ============
+  // ============ 小程序联动配置 ============
   // 填写后，微信用户点击推送卡片可直接跳转进小程序
   MINIPROGRAM: {
-    enable: false, // 注册并拿到小程序 AppID 后改为 true
-    appid: process.env.MINIPROGRAM_APPID || '${TODO: 填入你的小程序 AppID}',
+    enable: true, // 开启小程序点击直达联动
+    appid: process.env.MINIPROGRAM_APPID || 'wx0744350fe50decee',
     pagepath: 'pages/MainPage/index'
   },
 
@@ -44,8 +44,8 @@ module.exports = {
     {
       // --- 小宝宝的早安推送 ---
       name: '小宝宝',
-      id: process.env.TARGET_USER_OPENID || '${TODO: 填入小宝宝关注测试号后的 OpenID}',
-      useTemplateId: '0001',
+      id: process.env.TARGET_USER_OPENID || 'o5J-u3EHfwjgkFycAYe8lLJj_HCw',
+      useTemplateId: 'BtR7DY91nbUf7SiVjQAJIVBMEKYuWpaKU8p02VaOlTc',
       province: '河北',
       city: '大名',
       horoscopeDate: '03-08',  // 双鱼座 ♓ (02-19 ~ 03-20)
@@ -75,5 +75,5 @@ module.exports = {
   // ============ 状态回执通知 ============
   // 推送完成后向大宝宝自己推送一条状态回执
   CALLBACK_TEMPLATE_ID: process.env.CALLBACK_TEMPLATE_ID || '',
-  CALLBACK_USERS: [process.env.ADMIN_USER_OPENID || '']
+  CALLBACK_USERS: [process.env.ADMIN_USER_OPENID || 'o5J-u3Pet3R80SimhbmbmKMXPUcU']
 };
