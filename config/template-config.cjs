@@ -11,18 +11,23 @@
  *
  * ----------------------------------------------------
  * {{first.DATA}}
+ * 
  * 📅 日期：{{date.DATA}}
  * 🌤 天气：{{weather.DATA}}
  * 🌡 气温：{{min_temperature.DATA}} ~ {{max_temperature.DATA}}
- * 💨 风向风力：{{wind_direction.DATA}} {{wind_scale.DATA}}
- * 💧 相对湿度：{{shidu.DATA}}
+ * 💨 风向：{{wind_direction.DATA}} {{wind_scale.DATA}}
+ * 🌊 湿度：{{shidu.DATA}}
+ * 
  * ❤️ 恋爱天数：{{love_day.DATA}}
  * 🎂 距离生日：{{birthday_message.DATA}}
- * 🔮 今日运势：{{horoscope_all.DATA}}
- * 🌹 今日情话：{{saylove.DATA}}
+ * 
+ * ✨ 今日运势：{{horoscope_all.DATA}}
+ * 💌 今日情话：{{saylove.DATA}}
  * 🌈 每日一夸：{{caihongpi.DATA}}
  * 📜 晨读诗词：{{poetry.DATA}}
+ * 
  * 💊 药学趣知：{{pharmacy_fact.DATA}}
+ * 
  * {{remark.DATA}}
  * ----------------------------------------------------
  *
