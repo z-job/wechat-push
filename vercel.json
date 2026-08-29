@@ -1,17 +1,7 @@
 ﻿{
-  "version": 2,
-  "routes": [
-    {
-      "src": "/api/wechat",
-      "dest": "/api/wechat.js"
-    },
-    {
-      "src": "/wechat",
-      "dest": "/api/wechat.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/api/wechat.js"
-    }
+  "rewrites": [
+    { "source": "/api/wechat", "destination": "/api/wechat.js" },
+    { "source": "/wechat", "destination": "/api/wechat.js" },
+    { "source": "/", "destination": "/api/index.js" }
   ]
 }
