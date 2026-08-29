@@ -74,6 +74,15 @@ async function buildMessagePayload(user, config, templateConfig) {
       : '💕 大宝宝每天都在想你～';
   }
 
+  // 计算距离考研天数 (12月19日)
+  const kaoyanDays = getDaysUntilNextDate(config.KAOYAN_DATE || '12-19');
+  let kaoyanMsg = '';
+  if (kaoyanDays === 0) {
+    kaoyanMsg = '🎉 今天考研！小宝宝一战成硕！';
+  } else {
+    kaoyanMsg = `还有 【 ${kaoyanDays} 】 天`;
+  }
+
   // 智能降雨检测与专属带伞提醒
   const rainNotice = weatherData.has_rain
     ? (user.name === '小宝宝' ? ' 可能会下雨，小宝宝记得带伞或雨披嗷' : ' 可能会下雨，大宝宝记得带伞或雨披嗷')
@@ -89,6 +98,7 @@ async function buildMessagePayload(user, config, templateConfig) {
     ``,
     `❤️ 恋爱天数：【 ${loveDays} 天 】`,
     `🎂 距离生日：${birthdayMsg}`,
+    `🎓 距离考研：${kaoyanMsg}`,
     ``,
     `✨ 今日运势：${quotesData.horoscope}`,
     `🌹 今日情话：${quotesData.saylove}`,
@@ -148,8 +158,12 @@ async function buildMessagePayload(user, config, templateConfig) {
         color: colors.love_day
       },
       birthday_message: {
-        value: birthdayMsg,
+        value: `${birthdayMsg}\n🎓 距离考研：${kaoyanMsg}`,
         color: colors.birthday_message
+      },
+      kaoyan_day: {
+        value: kaoyanMsg,
+        color: '#FF8F00'
       },
       horoscope_all: {
         value: quotesData.horoscope,
