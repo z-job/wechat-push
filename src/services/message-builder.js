@@ -74,9 +74,16 @@ async function buildMessagePayload(user, config, templateConfig) {
       : '💕 大宝宝每天都在想你～';
   }
 
+  // 智能降雨检测与专属带伞提醒
+  const rainNotice = weatherData.has_rain
+    ? (user.name === '小宝宝' ? ' 可能会下雨，小宝宝记得带伞或雨披嗷' : ' 可能会下雨，大宝宝记得带伞或雨披嗷')
+    : '';
+
+  const weatherDisplay = `${weatherData.weather_desc || '晴 ☀️'}${rainNotice}`;
+
   const fullFormattedCardText = [
     `📅 日期：${dateStr} ${weekDayStr}`,
-    `🌤 天气：${weatherData.weather_desc || '晴 ☀️'}`,
+    `🌤 天气：${weatherDisplay}`,
     `气温：${weatherData.min_temp} ~ ${weatherData.max_temp}`,
     `💨 风向：${weatherData.wind_direction} ${weatherData.wind_scale} ｜ 湿度：${weatherData.shidu}`,
     ``,
@@ -113,7 +120,7 @@ async function buildMessagePayload(user, config, templateConfig) {
         color: colors.weather
       },
       weather: {
-        value: weatherData.weather,
+        value: `${weatherDisplay}\n气温：${weatherData.min_temp} ~ ${weatherData.max_temp}`,
         color: colors.weather
       },
       min_temperature: {

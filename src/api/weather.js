@@ -150,6 +150,13 @@ async function getWeather(city = '大名', options = {}) {
           const windScale = getWindScale(realtime.wind?.speed);
           const keypoint = result.forecast_keypoint || result.hourly?.description || '';
 
+          const hasRain = 
+            (realtime.skycon && realtime.skycon.includes('RAIN')) ||
+            (daily.skycon?.[0]?.value && daily.skycon[0].value.includes('RAIN')) ||
+            (daily.precipitation?.[0]?.max > 0) ||
+            (weatherDesc && weatherDesc.includes('雨')) ||
+            (keypoint && keypoint.includes('雨'));
+
           return {
             weather: `${weatherDesc}\n气温：${minTemp}度 ~ ${maxTemp}度`,
             weather_desc: weatherDesc,
@@ -159,6 +166,7 @@ async function getWeather(city = '大名', options = {}) {
             wind_scale: windScale,
             shidu: humidity,
             keypoint: keypoint,
+            has_rain: !!hasRain,
             comfort: daily.life_index?.comfort?.[0]?.desc || '舒适',
             dressing: daily.life_index?.dressing?.[0]?.desc || '适宜',
             ultraviolet: daily.life_index?.ultraviolet?.[0]?.desc || '中等'
@@ -190,6 +198,7 @@ async function getWeather(city = '大名', options = {}) {
         const minNum = r.lowest ? r.lowest.replace(/[^0-9-]/g, '') : '18';
         const maxNum = r.highest ? r.highest.replace(/[^0-9-]/g, '') : '28';
         const weatherDesc = r.weather || '晴 ☀️';
+        const hasRain = weatherDesc.includes('雨') || (r.tips && r.tips.includes('雨'));
         return {
           weather: `${weatherDesc}\n气温：${minNum}度 ~ ${maxNum}度`,
           weather_desc: weatherDesc,
@@ -197,7 +206,8 @@ async function getWeather(city = '大名', options = {}) {
           max_temp: `${maxNum}度`,
           wind_direction: r.wind || '微风',
           wind_scale: r.windsc || '1-2级',
-          shidu: r.humidity || '45%'
+          shidu: r.humidity || '45%',
+          has_rain: !!hasRain
         };
       }
     } catch (e) {
@@ -219,6 +229,7 @@ async function getWeather(city = '大名', options = {}) {
       const weatherText = WTTR_WEATHER_MAP[rawWeather] || rawWeather;
       const windDir = WTTR_WIND_DIR_MAP[current.winddir16Point] || `${current.winddir16Point}风`;
       const windSc = kmphToScale(current.windspeedKmph);
+      const hasRain = rawWeather.toLowerCase().includes('rain') || weatherText.includes('雨');
 
       return {
         weather: `${weatherText}\n气温：${today.mintempC}度 ~ ${today.maxtempC}度`,
@@ -227,7 +238,8 @@ async function getWeather(city = '大名', options = {}) {
         max_temp: `${today.maxtempC}度`,
         wind_direction: windDir,
         wind_scale: windSc,
-        shidu: `${current.humidity}%`
+        shidu: `${current.humidity}%`,
+        has_rain: !!hasRain
       };
     }
   } catch (e) {
@@ -242,7 +254,8 @@ async function getWeather(city = '大名', options = {}) {
     max_temp: '26度',
     wind_direction: '微风',
     wind_scale: '2级',
-    shidu: '50%'
+    shidu: '50%',
+    has_rain: false
   };
 }
 
