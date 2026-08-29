@@ -108,6 +108,28 @@ const POETRY_QUOTES = [
   '晓看天色暮看云，行也思君，坐也思君。'
 ];
 
+// ==================== 内置精选双鱼座专属好运签 (小宝宝专属 · 7条纯吉金句 · <=15字) ====================
+const PISCES_HOROSCOPE = [
+  '双鱼座⭐好运连连，复习如有神助！',
+  '双鱼座⭐今日诸事顺遂，元气满满！',
+  '双鱼座⭐幸运值满格，考点过目不忘！',
+  '双鱼座⭐喜气盈门，所遇皆是美好！',
+  '双鱼座⭐贵人相助，难题迎刃而解！',
+  '双鱼座⭐福气满满，心想皆能事成！',
+  '双鱼座⭐吉星高照，每天都是上上签！'
+];
+
+// ==================== 内置精选天蝎座专属好运签 (大宝宝专属 · 7条纯吉金句 · <=15字) ====================
+const SCORPIO_HOROSCOPE = [
+  '天蝎座⭐科研顺利，灵感源源不断！',
+  '天蝎座⭐今日运势极佳，心想事成！',
+  '天蝎座⭐突破在即，实验数据喜人！',
+  '天蝎座⭐财福双全，诸事皆得圆满！',
+  '天蝎座⭐气场全开，难题迎刃而解！',
+  '天蝎座⭐吉星庇佑，所向披靡大吉！',
+  '天蝎座⭐鸿运当头，每天都是上上签！'
+];
+
 function getRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -124,10 +146,10 @@ async function getQuotes(tianApiKey = '', horoscopeName = '双鱼座') {
   let poetry = getRandom(POETRY_QUOTES);
   let pharmacy_fact = getRandom(PHARMACY_FACTS);
   
-  // 默认星座运势文案 (极简防截断版 14-16字)
+  // 随机抽取专属 100% 纯吉好运签 (严格控制在 15 字以内，每日随机不同)
   let horoscope = horoscopeName === '天蝎座' 
-    ? '天蝎座 ⭐ 运势极佳，科研突破心想事成！'
-    : '双鱼座 ⭐ 综合指数98%，浪漫甜蜜好运连连！';
+    ? getRandom(SCORPIO_HOROSCOPE)
+    : getRandom(PISCES_HOROSCOPE);
 
   // 尝试从天行数据获取更多动态文案
   if (tianApiKey && !tianApiKey.startsWith('${TODO')) {
