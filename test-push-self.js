@@ -1,4 +1,4 @@
-﻿const config = require('./config/index.cjs');
+const config = require('./config/index.cjs');
 const templateConfigList = require('./config/template-config.cjs');
 const { getAccessToken, sendTemplateMessage } = require('./src/api/wechat');
 const { buildMessagePayload } = require('./src/services/message-builder');
@@ -15,7 +15,7 @@ async function testPushSelf() {
     const adminUser = config.USERS.find(u => u.name === '大宝宝') || {
       name: '大宝宝',
       id: config.CALLBACK_USERS?.[0] || 'o5J-u3Pet3R80SimhbmbmKMXPUcU',
-      useTemplateId: 'BtR7DY91nbUf7SiVjQAJIVBMEKYuWpaKU8p02VaOlTc',
+      useTemplateId: 'idJcElj0EsTA1T1-f6COkyYwN9THaiUXBe8AWDLF-lI',
       province: '天津',
       city: '天津',
       horoscopeDate: '11-20',

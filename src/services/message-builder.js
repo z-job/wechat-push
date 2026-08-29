@@ -67,6 +67,23 @@ async function buildMessagePayload(user, config, templateConfig) {
       : `还有 【 ${birthdayDays} 】 天`;
   }
 
+  const fullFormattedCardText = [
+    `📅 日期：${dateStr} ${weekDayStr}`,
+    `🌤 天气：${weatherData.weather}（${weatherData.min_temp} ~ ${weatherData.max_temp}）`,
+    `💨 风向：${weatherData.wind_direction} ${weatherData.wind_scale} ｜ 湿度：${weatherData.shidu}`,
+    ``,
+    `❤️ 恋爱天数：【 ${loveDays} 天 】`,
+    `🎂 距离生日：${birthdayMsg}`,
+    ``,
+    `✨ 今日运势：${quotesData.horoscope}`,
+    `🌹 今日情话：${quotesData.saylove}`,
+    `🌈 每日一夸：${quotesData.caihongpi}`,
+    `📜 晨读诗词：${quotesData.poetry}`,
+    ``,
+    `💊 药学趣知：`,
+    `${quotesData.pharmacy_fact}`
+  ].join('\n');
+
   const payload = {
     touser: user.id,
     template_id: user.useTemplateId || templateConfig.id || '0001',
@@ -74,6 +91,10 @@ async function buildMessagePayload(user, config, templateConfig) {
       first: {
         value: firstGreeting,
         color: colors.first
+      },
+      content: {
+        value: fullFormattedCardText,
+        color: colors.date
       },
       date: {
         value: `${dateStr} ${weekDayStr}`,
