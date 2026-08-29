@@ -14,8 +14,11 @@ async function buildMessagePayload(user, config, templateConfig) {
   const loveDays = getLoveDays(user.customizedDateList?.[0]?.date || '2025-04-06');
   const birthdayDays = getDaysUntilNextDate(user.horoscopeDate || '03-08');
 
-  // 获取天气数据
-  const weatherData = await getWeather(user.city || '大名', config.TIAN_API?.key);
+  // 获取天气数据 (优先彩云天气高精度气象源)
+  const weatherData = await getWeather(user.city || '大名', {
+    caiyunToken: config.CAIYUN_API?.token,
+    tianApiKey: config.TIAN_API?.key
+  });
 
   // 获取文案数据
   const quotesData = await getQuotes(config.TIAN_API?.key);

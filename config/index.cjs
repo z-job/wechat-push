@@ -22,7 +22,11 @@ module.exports = {
   },
 
   // ============ 第三方数据平台密钥 ============
-  // 获取途径: https://www.tianapi.com/
+  // 彩云天气开放平台 (高精度分钟级降水、自然语言描述)
+  CAIYUN_API: {
+    token: process.env.CAIYUN_TOKEN || 'lQDN5mDzagcnN0sa'
+  },
+  // 天行数据平台 (备用天气与文案)
   TIAN_API: {
     key: process.env.TIAN_API_KEY || '${TODO: 填入你的天行数据 API Key}'
   },

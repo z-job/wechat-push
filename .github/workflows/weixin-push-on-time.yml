@@ -31,6 +31,7 @@ jobs:
         env:
           APP_ID: ${{ secrets.APP_ID }}
           APP_SECRET: ${{ secrets.APP_SECRET }}
+          CAIYUN_TOKEN: ${{ secrets.CAIYUN_TOKEN }}
           TIAN_API_KEY: ${{ secrets.TIAN_API_KEY }}
           TARGET_USER_OPENID: ${{ secrets.TARGET_USER_OPENID }}
           MINIPROGRAM_APPID: ${{ secrets.MINIPROGRAM_APPID }}
