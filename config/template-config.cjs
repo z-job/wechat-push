@@ -32,24 +32,24 @@
 const TEMPLATE_CONFIG = [
   {
     id: '0001',
-    // 🌸 莫兰迪樱花奶油配色方案
+    // 🌟 高饱和亮眼醒目配色方案 (高对比度、数字突出、暗黑/浅色模式均极清晰)
     colorScheme: {
-      first:           '#E8A0BF',  // 温柔藕粉 — 开头问候语
-      date:            '#BA90C6',  // 淡香芋紫 — 日期
-      weather:         '#C0DBEA',  // 晴空薄蓝 — 天气描述
-      min_temperature: '#F5B7B1',  // 浅珊瑚粉 — 最低温
-      max_temperature: '#E8A0BF',  // 藕粉 — 最高温
-      wind_direction:  '#C0DBEA',  // 晴空薄蓝 — 风向
-      wind_scale:      '#C0DBEA',  // 晴空薄蓝 — 风力
-      shidu:           '#A8E6CF',  // 薄荷绿 — 湿度
-      love_day:        '#FF69B4',  // 热恋粉（醒目）— 恋爱天数
-      birthday_message:'#DDA0DD',  // 浪漫淡紫 — 生日倒数
-      horoscope_all:   '#87CEEB',  // 天蓝 — 星座运势
-      saylove:         '#F8B4B8',  // 蜜桃粉 — 情话
-      caihongpi:       '#E8A0BF',  // 藕粉 — 彩虹屁
-      poetry:          '#C3B1E1',  // 薰衣草紫 — 诗词
-      pharmacy_fact:   '#A8E6CF',  // 薄荷绿 — 药学冷知识
-      remark:          '#B0B0B0',  // 柔灰 — 结尾备注
+      first:           '#FF1493',  // 鲜亮玫瑰粉 (极醒目大标题)
+      date:            '#9C27B0',  // 罗兰深紫 (清晰醒目)
+      weather:         '#00B0FF',  // 晴空亮蓝 (明亮)
+      min_temperature: '#FF6D00',  // 暖阳亮橙 (数字醒目)
+      max_temperature: '#FF1744',  // 艳丽绯红 (数字醒目)
+      wind_direction:  '#00B0FF',  // 晴空亮蓝
+      wind_scale:      '#00E676',  // 鲜明翠绿 (风力突出)
+      shidu:           '#00B4D8',  // 清澈湖蓝 (湿度醒目)
+      love_day:        '#FF0055',  // 醒目高亮热恋红 (核心数字极度吸睛)
+      birthday_message:'#FF8F00',  // 璀璨亮金橙 (倒数天数吸睛)
+      horoscope_all:   '#AB47BC',  // 亮紫罗兰 (运势醒目)
+      saylove:         '#E91E63',  // 亮丽蜜桃粉 (情话突出)
+      caihongpi:       '#FF6D00',  // 亮珊瑚橙 (夸赞醒目)
+      poetry:          '#7E57C2',  // 典雅深紫 (诗词有层次)
+      pharmacy_fact:   '#00C853',  // 翡翠高亮绿 (专业冷知识突出)
+      remark:          '#FF1493',  // 鲜亮玫瑰粉 (底栏寄语突出)
     },
 
     // 开头问候语

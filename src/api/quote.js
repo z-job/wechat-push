@@ -64,8 +64,8 @@ async function getQuotes(tianApiKey = '', horoscopeName = '双鱼座') {
   
   // 默认星座运势文案
   let horoscope = horoscopeName === '天蝎座' 
-    ? '天蝎座 ♏ 今日运势极佳，能量满满，科研突破，心想事成！⭐⭐⭐⭐⭐'
-    : '双鱼座 ♓ 今日综合指数 98%，浪漫甜蜜，万事顺意，好运连连！⭐⭐⭐⭐⭐';
+    ? '天蝎座 ⭐ 今日运势极佳，能量满满，科研突破，心想事成！⭐⭐⭐⭐⭐'
+    : '双鱼座 ⭐ 今日综合指数 98%，浪漫甜蜜，万事顺意，好运连连！⭐⭐⭐⭐⭐';
 
   // 尝试从天行数据获取更多动态文案
   if (tianApiKey && !tianApiKey.startsWith('${TODO')) {
@@ -84,8 +84,7 @@ async function getQuotes(tianApiKey = '', horoscopeName = '双鱼座') {
       }
       if (starRes.status === 'fulfilled' && starRes.value.data && starRes.value.data.result) {
         const r = starRes.value.data.result;
-        const astroIcon = horoscopeName === '天蝎座' ? '♏' : '♓';
-        horoscope = `${horoscopeName} ${astroIcon} 今日综合指数：${r.all || '95%'} | 爱情指数：${r.love || '100%'} ✨`;
+        horoscope = `${horoscopeName} ⭐ 今日综合指数：${r.all || '95%'} | 爱情指数：${r.love || '100%'} ✨`;
       }
     } catch (e) {
       console.warn(`[Quotes] TianAPI enrichment partially failed: ${e.message}, using built-in high-quality quotes.`);

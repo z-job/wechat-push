@@ -23,24 +23,24 @@ async function buildMessagePayload(user, config, templateConfig) {
   // 获取文案数据 (按用户星座动态适配)
   const quotesData = await getQuotes(config.TIAN_API?.key, user.horoscopeName || (user.name === '大宝宝' ? '天蝎座' : '双鱼座'));
 
-  // 莫兰迪配色表
+  // 🌟 高饱和亮眼醒目配色表
   const colors = templateConfig?.colorScheme || {
-    first: '#E8A0BF',
-    date: '#BA90C6',
-    weather: '#C0DBEA',
-    min_temperature: '#F5B7B1',
-    max_temperature: '#E8A0BF',
-    wind_direction: '#C0DBEA',
-    wind_scale: '#C0DBEA',
-    shidu: '#A8E6CF',
-    love_day: '#FF69B4',
-    birthday_message: '#DDA0DD',
-    horoscope_all: '#87CEEB',
-    saylove: '#F8B4B8',
-    caihongpi: '#E8A0BF',
-    poetry: '#C3B1E1',
-    pharmacy_fact: '#A8E6CF',
-    remark: '#B0B0B0'
+    first: '#FF1493',          // 鲜亮玫瑰粉 (极醒目大标题)
+    date: '#9C27B0',           // 罗兰深紫
+    weather: '#00B0FF',        // 晴空亮蓝
+    min_temperature: '#FF6D00',// 暖阳亮橙
+    max_temperature: '#FF1744',// 艳丽绯红
+    wind_direction: '#00B0FF', // 晴空亮蓝
+    wind_scale: '#00E676',     // 鲜明翠绿
+    shidu: '#00B4D8',          // 清澈湖蓝
+    love_day: '#FF0055',       // 醒目高亮热恋红
+    birthday_message: '#FF8F00', // 璀璨亮金橙
+    horoscope_all: '#AB47BC',  // 亮紫罗兰
+    saylove: '#E91E63',        // 亮丽蜜桃粉
+    caihongpi: '#FF6D00',      // 亮珊瑚橙
+    poetry: '#7E57C2',         // 典雅深紫
+    pharmacy_fact: '#00C853',  // 翡翠高亮绿
+    remark: '#FF1493'          // 鲜亮玫瑰粉
   };
 
   // 生成个性化问候与生日文案
@@ -63,8 +63,8 @@ async function buildMessagePayload(user, config, templateConfig) {
     birthdayMsg = `🎉 祝${user.name}今天生日快乐！🎂✨`;
   } else {
     birthdayMsg = user.name === '大宝宝'
-      ? `距离大宝宝生日还有 ${birthdayDays} 天`
-      : `还有 ${birthdayDays} 天`;
+      ? `距离大宝宝生日还有 【 ${birthdayDays} 】 天`
+      : `还有 【 ${birthdayDays} 】 天`;
   }
 
   const payload = {
@@ -88,11 +88,11 @@ async function buildMessagePayload(user, config, templateConfig) {
         color: colors.weather
       },
       min_temperature: {
-        value: weatherData.min_temp,
+        value: `${weatherData.min_temp}`,
         color: colors.min_temperature
       },
       max_temperature: {
-        value: weatherData.max_temp,
+        value: `${weatherData.max_temp}`,
         color: colors.max_temperature
       },
       wind_direction: {
@@ -100,15 +100,15 @@ async function buildMessagePayload(user, config, templateConfig) {
         color: colors.wind_direction
       },
       wind_scale: {
-        value: weatherData.wind_scale,
+        value: `${weatherData.wind_scale}`,
         color: colors.wind_scale
       },
       shidu: {
-        value: weatherData.shidu,
+        value: `${weatherData.shidu}`,
         color: colors.shidu
       },
       love_day: {
-        value: `${loveDays} 天`,
+        value: `【 ${loveDays} 天 】`,
         color: colors.love_day
       },
       birthday_message: {
