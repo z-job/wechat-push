@@ -144,7 +144,6 @@ async function getWeather(city = '大名', options = {}) {
           const daily = result.daily;
           const minTemp = daily.temperature?.[0]?.min !== undefined ? Math.round(daily.temperature[0].min) : 18;
           const maxTemp = daily.temperature?.[0]?.max !== undefined ? Math.round(daily.temperature[0].max) : 28;
-          const curTemp = realtime.temperature !== undefined ? Math.round(realtime.temperature) : minTemp;
           const weatherDesc = SKYCON_MAP[realtime.skycon] || '多云 ⛅';
           const humidity = realtime.humidity !== undefined ? `${Math.round(realtime.humidity * 100)}%` : '50%';
           const windDirection = getWindDirection(realtime.wind?.direction);
@@ -152,7 +151,8 @@ async function getWeather(city = '大名', options = {}) {
           const keypoint = result.forecast_keypoint || result.hourly?.description || '';
 
           return {
-            weather: `${weatherDesc} ${minTemp}℃ ~ ${maxTemp}℃`,
+            weather: `${weatherDesc}\n气温：${minTemp}℃ ~ ${maxTemp}℃`,
+            weather_desc: weatherDesc,
             min_temp: `${minTemp}℃`,
             max_temp: `${maxTemp}℃`,
             wind_direction: windDirection,
@@ -189,8 +189,10 @@ async function getWeather(city = '大名', options = {}) {
         const r = res.data.result;
         const minTemp = r.lowest ? (r.lowest.endsWith('℃') ? r.lowest : `${r.lowest}℃`) : '18℃';
         const maxTemp = r.highest ? (r.highest.endsWith('℃') ? r.highest : `${r.highest}℃`) : '28℃';
+        const weatherDesc = r.weather || '晴 ☀️';
         return {
-          weather: `${r.weather || '晴 ☀️'} ${minTemp} ~ ${maxTemp}`,
+          weather: `${weatherDesc}\n气温：${minTemp} ~ ${maxTemp}`,
+          weather_desc: weatherDesc,
           min_temp: minTemp,
           max_temp: maxTemp,
           wind_direction: r.wind || '微风',
@@ -219,7 +221,8 @@ async function getWeather(city = '大名', options = {}) {
       const windSc = kmphToScale(current.windspeedKmph);
 
       return {
-        weather: `${weatherText} ${today.mintempC}℃ ~ ${today.maxtempC}℃`,
+        weather: `${weatherText}\n气温：${today.mintempC}℃ ~ ${today.maxtempC}℃`,
+        weather_desc: weatherText,
         min_temp: `${today.mintempC}℃`,
         max_temp: `${today.maxtempC}℃`,
         wind_direction: windDir,
@@ -233,7 +236,8 @@ async function getWeather(city = '大名', options = {}) {
 
   // 尝试 4: 本地智能兜底数据 (保证推送绝对不中断)
   return {
-    weather: '晴朗 ☀️ 18℃ ~ 26℃',
+    weather: '晴朗 ☀️\n气温：18℃ ~ 26℃',
+    weather_desc: '晴朗 ☀️',
     min_temp: '18℃',
     max_temp: '26℃',
     wind_direction: '微风',

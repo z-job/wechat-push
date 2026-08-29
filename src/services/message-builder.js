@@ -76,7 +76,8 @@ async function buildMessagePayload(user, config, templateConfig) {
 
   const fullFormattedCardText = [
     `📅 日期：${dateStr} ${weekDayStr}`,
-    `🌤 天气：${weatherData.weather}（${weatherData.min_temp} ~ ${weatherData.max_temp}）`,
+    `🌤 天气：${weatherData.weather_desc || '晴 ☀️'}`,
+    `气温：${weatherData.min_temp} ~ ${weatherData.max_temp}`,
     `💨 风向：${weatherData.wind_direction} ${weatherData.wind_scale} ｜ 湿度：${weatherData.shidu}`,
     ``,
     `❤️ 恋爱天数：【 ${loveDays} 天 】`,
