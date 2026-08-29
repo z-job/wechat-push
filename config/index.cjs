@@ -50,11 +50,13 @@ module.exports = {
       // --- 小宝宝的早安推送 ---
       name: '小宝宝',
       id: process.env.TARGET_USER_OPENID || 'o5J-u3EHfwjgkFycAYe8lLJj_HCw',
-      useTemplateId: 'BtR7DY91nbUf7SiVjQAJIVBMEKYuWpaKU8p02VaOlTc',
+      useTemplateId: process.env.TEMPLATE_ID || 'BtR7DY91nbUf7SiVjQAJIVBMEKYuWpaKU8p02VaOlTc',
       province: '河北',
       city: '大名',
       horoscopeDate: '03-08',  // 双鱼座 ♓ (02-19 ~ 03-20)
       horoscopeName: '双鱼座',
+      firstText: '🌸 早安，小宝宝~ 今天也要元气满满哦！',
+      remarkText: '💕 大宝宝每天都在想你～',
       festivals: [
         {
           type: 'Birthday',
@@ -68,6 +70,37 @@ module.exports = {
           name: '大宝宝阳历生日',
           year: '2002',
           date: '11-20',
+          isLunar: false
+        }
+      ],
+      customizedDateList: [
+        { keyword: 'love_day', date: '2025-04-06' }, // 恋爱纪念日
+      ]
+    },
+    {
+      // --- 大宝宝的早安推送 ---
+      name: '大宝宝',
+      id: process.env.ADMIN_USER_OPENID || 'o5J-u3Pet3R80SimhbmbmKMXPUcU',
+      useTemplateId: process.env.TEMPLATE_ID || 'BtR7DY91nbUf7SiVjQAJIVBMEKYuWpaKU8p02VaOlTc',
+      province: '天津',
+      city: '天津',
+      horoscopeDate: '11-20',  // 天蝎座 ♏ (10-24 ~ 11-22)
+      horoscopeName: '天蝎座',
+      firstText: '🌸 早安，大宝宝~ 今天科研和生活都要顺遂哦！',
+      remarkText: '💕 小宝宝和小窝时刻陪伴着你～',
+      festivals: [
+        {
+          type: 'Birthday',
+          name: '大宝宝阳历生日',
+          year: '2002',
+          date: '11-20',
+          isLunar: false
+        },
+        {
+          type: 'Birthday',
+          name: '小宝宝阳历生日',
+          year: '2003',
+          date: '03-08',
           isLunar: false
         }
       ],

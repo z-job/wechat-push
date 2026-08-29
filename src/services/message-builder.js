@@ -12,16 +12,16 @@ const { getQuotes } = require('../api/quote');
 async function buildMessagePayload(user, config, templateConfig) {
   const { dateStr, weekDayStr } = getFormattedDate();
   const loveDays = getLoveDays(user.customizedDateList?.[0]?.date || '2025-04-06');
-  const birthdayDays = getDaysUntilNextDate(user.horoscopeDate || '03-08');
+  const birthdayDays = getDaysUntilNextDate(user.horoscopeDate || (user.name === '大宝宝' ? '11-20' : '03-08'));
 
   // 获取天气数据 (优先彩云天气高精度气象源)
-  const weatherData = await getWeather(user.city || '大名', {
+  const weatherData = await getWeather(user.city || (user.name === '大宝宝' ? '天津' : '大名'), {
     caiyunToken: config.CAIYUN_API?.token,
     tianApiKey: config.TIAN_API?.key
   });
 
-  // 获取文案数据
-  const quotesData = await getQuotes(config.TIAN_API?.key);
+  // 获取文案数据 (按用户星座动态适配)
+  const quotesData = await getQuotes(config.TIAN_API?.key, user.horoscopeName || (user.name === '大宝宝' ? '天蝎座' : '双鱼座'));
 
   // 莫兰迪配色表
   const colors = templateConfig?.colorScheme || {
@@ -43,12 +43,36 @@ async function buildMessagePayload(user, config, templateConfig) {
     remark: '#B0B0B0'
   };
 
+  // 生成个性化问候与生日文案
+  let firstGreeting = user.firstText;
+  if (!firstGreeting) {
+    firstGreeting = user.name === '大宝宝'
+      ? '🌸 早安，大宝宝~ 今天科研和生活都要顺遂哦！'
+      : '🌸 早安，小宝宝~ 今天也要元气满满哦！';
+  }
+
+  let remarkMessage = user.remarkText;
+  if (!remarkMessage) {
+    remarkMessage = user.name === '大宝宝'
+      ? '💕 小宝宝和小窝时刻陪伴着你～'
+      : '💕 大宝宝每天都在想你～';
+  }
+
+  let birthdayMsg = '';
+  if (birthdayDays === 0) {
+    birthdayMsg = `🎉 祝${user.name}今天生日快乐！🎂✨`;
+  } else {
+    birthdayMsg = user.name === '大宝宝'
+      ? `距离大宝宝生日还有 ${birthdayDays} 天`
+      : `还有 ${birthdayDays} 天`;
+  }
+
   const payload = {
     touser: user.id,
     template_id: user.useTemplateId || templateConfig.id || '0001',
     data: {
       first: {
-        value: templateConfig.firstText || `🌸 早安，${user.name}~`,
+        value: firstGreeting,
         color: colors.first
       },
       date: {
@@ -56,7 +80,7 @@ async function buildMessagePayload(user, config, templateConfig) {
         color: colors.date
       },
       city: {
-        value: user.city || '大名',
+        value: user.city || (user.name === '大宝宝' ? '天津 · 红桥' : '河北 · 大名'),
         color: colors.weather
       },
       weather: {
@@ -88,7 +112,7 @@ async function buildMessagePayload(user, config, templateConfig) {
         color: colors.love_day
       },
       birthday_message: {
-        value: birthdayDays === 0 ? '🎉 宝贝今天生日快乐！🎂✨' : `还有 ${birthdayDays} 天`,
+        value: birthdayMsg,
         color: colors.birthday_message
       },
       horoscope_all: {
@@ -112,7 +136,7 @@ async function buildMessagePayload(user, config, templateConfig) {
         color: colors.pharmacy_fact
       },
       remark: {
-        value: templateConfig.remarkText || '💕 大宝宝每天都在想你～',
+        value: remarkMessage,
         color: colors.remark
       }
     }

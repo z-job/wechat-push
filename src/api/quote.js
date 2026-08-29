@@ -53,14 +53,19 @@ function getRandom(arr) {
 /**
  * 聚合获取每日文案
  * @param {string} tianApiKey - 天行数据 API Key
+ * @param {string} horoscopeName - 星座名称，如 '双鱼座' 或 '天蝎座'
  * @returns {Promise<object>}
  */
-async function getQuotes(tianApiKey = '') {
+async function getQuotes(tianApiKey = '', horoscopeName = '双鱼座') {
   let saylove = getRandom(SAYLOVE_QUOTES);
   let caihongpi = getRandom(CAIHONGPI_QUOTES);
   let poetry = getRandom(POETRY_QUOTES);
   let pharmacy_fact = getRandom(PHARMACY_FACTS);
-  let horoscope = '今日整体运势极佳，心想事成，爱情指数五颗星 ⭐⭐⭐⭐⭐！';
+  
+  // 默认星座运势文案
+  let horoscope = horoscopeName === '天蝎座' 
+    ? '天蝎座 ♏ 今日运势极佳，能量满满，科研突破，心想事成！⭐⭐⭐⭐⭐'
+    : '双鱼座 ♓ 今日综合指数 98%，浪漫甜蜜，万事顺意，好运连连！⭐⭐⭐⭐⭐';
 
   // 尝试从天行数据获取更多动态文案
   if (tianApiKey && !tianApiKey.startsWith('${TODO')) {
@@ -68,7 +73,7 @@ async function getQuotes(tianApiKey = '') {
       const [sayRes, piRes, starRes] = await Promise.allSettled([
         axios.get('https://apis.tianapi.com/saylove/index', { params: { key: tianApiKey }, timeout: 3000 }),
         axios.get('https://apis.tianapi.com/caihongpi/index', { params: { key: tianApiKey }, timeout: 3000 }),
-        axios.get('https://apis.tianapi.com/star/index', { params: { key: tianApiKey, astro: '双鱼座' }, timeout: 3000 })
+        axios.get('https://apis.tianapi.com/star/index', { params: { key: tianApiKey, astro: horoscopeName }, timeout: 3000 })
       ]);
 
       if (sayRes.status === 'fulfilled' && sayRes.value.data && sayRes.value.data.result) {
@@ -79,7 +84,8 @@ async function getQuotes(tianApiKey = '') {
       }
       if (starRes.status === 'fulfilled' && starRes.value.data && starRes.value.data.result) {
         const r = starRes.value.data.result;
-        horoscope = `双鱼座 ♓ 今日综合指数：${r.all || '95%'} | 爱情指数：${r.love || '100%'} ✨`;
+        const astroIcon = horoscopeName === '天蝎座' ? '♏' : '♓';
+        horoscope = `${horoscopeName} ${astroIcon} 今日综合指数：${r.all || '95%'} | 爱情指数：${r.love || '100%'} ✨`;
       }
     } catch (e) {
       console.warn(`[Quotes] TianAPI enrichment partially failed: ${e.message}, using built-in high-quality quotes.`);

@@ -33,10 +33,13 @@ const CITY_COORDINATES = {
   '大名': '115.1472,36.2854',
   '大名县': '115.1472,36.2854',
   '邯郸': '114.4907,36.6123',
-  '天津': '117.1767,39.1422',
-  '天津市': '117.1767,39.1422',
-  '北京': '116.4074,39.9042',
-  '红桥': '117.1523,39.1712'
+  '天津': '117.1523,39.1712',
+  '天津市': '117.1523,39.1712',
+  '红桥': '117.1523,39.1712',
+  '红桥区': '117.1523,39.1712',
+  '天津红桥': '117.1523,39.1712',
+  '天津市红桥区': '117.1523,39.1712',
+  '北京': '116.4074,39.9042'
 };
 
 /**
@@ -54,9 +57,33 @@ function getWindDirection(deg) {
   return '西北风';
 }
 
-/**
- * 根据风速计算风力等级
- */
+const WTTR_WEATHER_MAP = {
+  'Sunny': '晴 ☀️',
+  'Clear': '晴朗 ☀️',
+  'Partly cloudy': '多云 ⛅',
+  'Partly Cloudy': '多云 ⛅',
+  'Cloudy': '阴天 ☁️',
+  'Overcast': '阴 ☁️',
+  'Mist': '薄雾 🌫️',
+  'Fog': '大雾 🌫️',
+  'Light rain': '小雨 🌧️',
+  'Moderate rain': '中雨 🌧️',
+  'Heavy rain': '大雨 ⛈️',
+  'Patchy rain possible': '局部阵雨 🌦️',
+  'Thundery outbreaks possible': '雷阵雨 ⛈️',
+  'Light snow': '小雪 🌨️',
+  'Moderate snow': '中雪 ❄️',
+  'Heavy snow': '大雪 ❄️',
+  'Patchy rain nearby': '局部小雨 🌦️'
+};
+
+const WTTR_WIND_DIR_MAP = {
+  'N': '北风', 'S': '南风', 'E': '东风', 'W': '西风',
+  'NE': '东北风', 'NW': '西北风', 'SE': '东南风', 'SW': '西南风',
+  'NNE': '东北偏北风', 'ENE': '东北偏东风', 'NNW': '西北偏北风', 'WNW': '西北偏西风',
+  'SSE': '东南偏南风', 'ESE': '东南偏东风', 'SSW': '西南偏南风', 'WSW': '西南偏西风'
+};
+
 function getWindScale(speed) {
   if (speed === undefined || speed === null) return '1-2级';
   if (speed < 1) return '0级';
@@ -66,6 +93,21 @@ function getWindScale(speed) {
   if (speed <= 28) return '4级';
   if (speed <= 38) return '5级';
   return '6级以上';
+}
+
+function kmphToScale(kmph) {
+  const speed = Number(kmph) || 0;
+  if (speed < 1) return '0级';
+  if (speed < 6) return '1级';
+  if (speed < 12) return '2级';
+  if (speed < 20) return '3级';
+  if (speed < 29) return '4级';
+  if (speed < 39) return '5级';
+  return '6级以上';
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
@@ -88,37 +130,46 @@ async function getWeather(city = '大名', options = {}) {
 
   // 尝试 1: 彩云天气开放平台 API (最高精度、自然语言短评、分钟级降水)
   if (caiyunToken && !caiyunToken.startsWith('${TODO')) {
-    try {
-      const coords = CITY_COORDINATES[city] || '115.1472,36.2854';
-      const url = `https://api.caiyunapp.com/v2.6/${caiyunToken}/${coords}/weather?dailysteps=1&hourlysteps=24`;
-      const res = await axios.get(url, { timeout: 6000 });
-      if (res.data && res.data.status === 'ok' && res.data.result) {
-        const result = res.data.result;
-        const realtime = result.realtime;
-        const daily = result.daily;
-        const minTemp = daily.temperature?.[0]?.min !== undefined ? Math.round(daily.temperature[0].min) : 18;
-        const maxTemp = daily.temperature?.[0]?.max !== undefined ? Math.round(daily.temperature[0].max) : 28;
-        const weatherDesc = SKYCON_MAP[realtime.skycon] || '多云 ⛅';
-        const humidity = realtime.humidity !== undefined ? `${Math.round(realtime.humidity * 100)}%` : '50%';
-        const windDirection = getWindDirection(realtime.wind?.direction);
-        const windScale = getWindScale(realtime.wind?.speed);
-        const keypoint = result.forecast_keypoint || result.hourly?.description || '';
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        if (attempt > 0) {
+          await sleep(600); // 429 频控重试微延迟
+        }
+        const coords = CITY_COORDINATES[city] || '115.1472,36.2854';
+        const url = `https://api.caiyunapp.com/v2.6/${caiyunToken}/${coords}/weather?dailysteps=1&hourlysteps=24`;
+        const res = await axios.get(url, { timeout: 6000 });
+        if (res.data && res.data.status === 'ok' && res.data.result) {
+          const result = res.data.result;
+          const realtime = result.realtime;
+          const daily = result.daily;
+          const minTemp = daily.temperature?.[0]?.min !== undefined ? Math.round(daily.temperature[0].min) : 18;
+          const maxTemp = daily.temperature?.[0]?.max !== undefined ? Math.round(daily.temperature[0].max) : 28;
+          const weatherDesc = SKYCON_MAP[realtime.skycon] || '多云 ⛅';
+          const humidity = realtime.humidity !== undefined ? `${Math.round(realtime.humidity * 100)}%` : '50%';
+          const windDirection = getWindDirection(realtime.wind?.direction);
+          const windScale = getWindScale(realtime.wind?.speed);
+          const keypoint = result.forecast_keypoint || result.hourly?.description || '';
 
-        return {
-          weather: weatherDesc,
-          min_temp: `${minTemp}℃`,
-          max_temp: `${maxTemp}℃`,
-          wind_direction: windDirection,
-          wind_scale: windScale,
-          shidu: humidity,
-          keypoint: keypoint,
-          comfort: daily.life_index?.comfort?.[0]?.desc || '舒适',
-          dressing: daily.life_index?.dressing?.[0]?.desc || '适宜',
-          ultraviolet: daily.life_index?.ultraviolet?.[0]?.desc || '中等'
-        };
+          return {
+            weather: weatherDesc,
+            min_temp: `${minTemp}℃`,
+            max_temp: `${maxTemp}℃`,
+            wind_direction: windDirection,
+            wind_scale: windScale,
+            shidu: humidity,
+            keypoint: keypoint,
+            comfort: daily.life_index?.comfort?.[0]?.desc || '舒适',
+            dressing: daily.life_index?.dressing?.[0]?.desc || '适宜',
+            ultraviolet: daily.life_index?.ultraviolet?.[0]?.desc || '中等'
+          };
+        }
+      } catch (e) {
+        if (attempt === 0 && e.response?.status === 429) {
+          continue; // 遇 429 进行一次快速避让重试
+        }
+        console.warn(`[Weather] 彩云天气请求异常 (${city}): ${e.message}，正在尝试备用源...`);
+        break;
       }
-    } catch (e) {
-      console.warn(`[Weather] 彩云天气请求异常 (${city}): ${e.message}，正在尝试备用源...`);
     }
   }
 
@@ -149,7 +200,7 @@ async function getWeather(city = '大名', options = {}) {
     }
   }
 
-  // 尝试 3: wttr.in 免费公开气象源
+  // 尝试 3: wttr.in 免费公开气象源 (含优雅中文转义)
   try {
     const encodedCity = encodeURIComponent(city);
     const res = await axios.get(`https://wttr.in/${encodedCity}?format=j1`, {
@@ -159,12 +210,17 @@ async function getWeather(city = '大名', options = {}) {
     if (res.data && res.data.current_condition && res.data.weather && res.data.weather.length > 0) {
       const current = res.data.current_condition[0];
       const today = res.data.weather[0];
+      const rawWeather = current.weatherDesc?.[0]?.value || 'Sunny';
+      const weatherText = WTTR_WEATHER_MAP[rawWeather] || rawWeather;
+      const windDir = WTTR_WIND_DIR_MAP[current.winddir16Point] || `${current.winddir16Point}风`;
+      const windSc = kmphToScale(current.windspeedKmph);
+
       return {
-        weather: current.weatherDesc[0].value || '晴 ☀️',
+        weather: weatherText,
         min_temp: `${today.mintempC}℃`,
         max_temp: `${today.maxtempC}℃`,
-        wind_direction: `${current.winddir16Point}风`,
-        wind_scale: `${current.windspeedKmph} km/h`,
+        wind_direction: windDir,
+        wind_scale: windSc,
         shidu: `${current.humidity}%`
       };
     }
