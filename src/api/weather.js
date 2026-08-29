@@ -152,7 +152,7 @@ async function getWeather(city = '大名', options = {}) {
           const keypoint = result.forecast_keypoint || result.hourly?.description || '';
 
           return {
-            weather: `${weatherDesc} ${curTemp}℃`,
+            weather: `${weatherDesc} ${minTemp}℃ ~ ${maxTemp}℃`,
             min_temp: `${minTemp}℃`,
             max_temp: `${maxTemp}℃`,
             wind_direction: windDirection,
@@ -187,11 +187,10 @@ async function getWeather(city = '大名', options = {}) {
       });
       if (res.data && res.data.code === 200 && res.data.result) {
         const r = res.data.result;
-        const curTemp = r.real ? r.real.replace('℃', '') : (r.lowest ? r.lowest.replace('℃', '') : '22');
         const minTemp = r.lowest ? (r.lowest.endsWith('℃') ? r.lowest : `${r.lowest}℃`) : '18℃';
         const maxTemp = r.highest ? (r.highest.endsWith('℃') ? r.highest : `${r.highest}℃`) : '28℃';
         return {
-          weather: `${r.weather || '晴 ☀️'} ${curTemp}℃`,
+          weather: `${r.weather || '晴 ☀️'} ${minTemp} ~ ${maxTemp}`,
           min_temp: minTemp,
           max_temp: maxTemp,
           wind_direction: r.wind || '微风',
@@ -218,10 +217,9 @@ async function getWeather(city = '大名', options = {}) {
       const weatherText = WTTR_WEATHER_MAP[rawWeather] || rawWeather;
       const windDir = WTTR_WIND_DIR_MAP[current.winddir16Point] || `${current.winddir16Point}风`;
       const windSc = kmphToScale(current.windspeedKmph);
-      const curTemp = current.temp_C || today.mintempC || '22';
 
       return {
-        weather: `${weatherText} ${curTemp}℃`,
+        weather: `${weatherText} ${today.mintempC}℃ ~ ${today.maxtempC}℃`,
         min_temp: `${today.mintempC}℃`,
         max_temp: `${today.maxtempC}℃`,
         wind_direction: windDir,
@@ -235,7 +233,7 @@ async function getWeather(city = '大名', options = {}) {
 
   // 尝试 4: 本地智能兜底数据 (保证推送绝对不中断)
   return {
-    weather: '晴朗 ☀️ 24℃',
+    weather: '晴朗 ☀️ 18℃ ~ 26℃',
     min_temp: '18℃',
     max_temp: '26℃',
     wind_direction: '微风',
