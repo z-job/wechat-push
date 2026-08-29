@@ -57,7 +57,7 @@ module.exports = {
       // --- 小宝宝的早安推送 ---
       name: '小宝宝',
       id: process.env.TARGET_USER_OPENID || 'o5J-u3EHfwjgkFycAYe8lLJj_HCw',
-      useTemplateId: process.env.TEMPLATE_ID || 'nu9ZFXe1UaXui301fuLLXF5sueyeLVue50SFGiDNtAg',
+      useTemplateId: process.env.TEMPLATE_ID || 'HpdpcWxcTfIuOBKtEM16qvIe1cWyyC3L9mf3IXgy8Vw',
       province: '河北',
       city: '大名',
       horoscopeDate: '03-08',  // 双鱼座 ♓ (02-19 ~ 03-20)
@@ -80,7 +80,7 @@ module.exports = {
       // --- 大宝宝的早安推送 ---
       name: '大宝宝',
       id: process.env.ADMIN_USER_OPENID || 'o5J-u3Pet3R80SimhbmbmKMXPUcU',
-      useTemplateId: process.env.TEMPLATE_ID || 'nu9ZFXe1UaXui301fuLLXF5sueyeLVue50SFGiDNtAg',
+      useTemplateId: process.env.TEMPLATE_ID || 'HpdpcWxcTfIuOBKtEM16qvIe1cWyyC3L9mf3IXgy8Vw',
       province: '天津',
       city: '天津',
       horoscopeDate: '11-20',  // 天蝎座 ♏ (10-24 ~ 11-22)

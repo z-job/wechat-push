@@ -15,7 +15,7 @@ async function testPushSelf() {
     const adminUser = config.USERS.find(u => u.name === '大宝宝') || {
       name: '大宝宝',
       id: config.CALLBACK_USERS?.[0] || 'o5J-u3Pet3R80SimhbmbmKMXPUcU',
-      useTemplateId: 'nu9ZFXe1UaXui301fuLLXF5sueyeLVue50SFGiDNtAg',
+      useTemplateId: 'HpdpcWxcTfIuOBKtEM16qvIe1cWyyC3L9mf3IXgy8Vw',
       province: '天津',
       city: '天津',
       horoscopeDate: '11-20',

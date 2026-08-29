@@ -14,12 +14,12 @@
  * 
  * 📅 日期：{{date.DATA}}
  * 🌤 天气：{{weather.DATA}}
- * 🌡 气温：{{min_temperature.DATA}} ~ {{max_temperature.DATA}}
  * 💨 风向：{{wind_direction.DATA}} {{wind_scale.DATA}}
  * 🌊 湿度：{{shidu.DATA}}
  * 
  * ❤️ 恋爱天数：{{love_day.DATA}}
  * 🎂 距离生日：{{birthday_message.DATA}}
+ * 🎓 距离考研：{{kaoyan_day.DATA}}
  * 
  * ✨ 今日运势：{{horoscope_all.DATA}}
  * 💌 今日情话：{{saylove.DATA}}

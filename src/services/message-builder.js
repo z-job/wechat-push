@@ -158,12 +158,12 @@ async function buildMessagePayload(user, config, templateConfig) {
         color: colors.love_day
       },
       birthday_message: {
-        value: `${birthdayMsg}\n🎓 距离考研：${kaoyanMsg}`,
+        value: birthdayMsg,
         color: colors.birthday_message
       },
       kaoyan_day: {
         value: kaoyanMsg,
-        color: '#FF8F00'
+        color: colors.birthday_message
       },
       horoscope_all: {
         value: quotesData.horoscope,
