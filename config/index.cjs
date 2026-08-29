@@ -12,6 +12,10 @@ module.exports = {
   APP_ID: process.env.APP_ID || 'wx2a24d755841b8137',
   APP_SECRET: process.env.APP_SECRET || '1653c3fb53933b7d1103d85add07574d',
 
+  // ============ 卡片点击跳转网页配置 ============
+  // 若配置了 URL，点击微信卡片将直接在微信内置浏览器打开该网页（如情侣博客、GitHub等）
+  URL: process.env.URL || 'https://github.com/z-job/wechat-push',
+
   // ============ 小程序联动配置 ============
   // 微信测试号官方规则：只有全网公开发布上线的小程序才支持模板卡片跳转。
   // 作为情侣私密体验版小程序，建议保持 false，直接通过微信下拉列表使用更安全。

@@ -163,6 +163,11 @@ async function buildMessagePayload(user, config, templateConfig) {
     }
   };
 
+  // 支持点击卡片跳转 (若设置了 URL 则点击直接打开网页)
+  if (user.url || config.URL) {
+    payload.url = user.url || config.URL;
+  }
+
   // 如果开启了小程序跳转联动
   if (config.MINIPROGRAM && config.MINIPROGRAM.enable && config.MINIPROGRAM.appid && !config.MINIPROGRAM.appid.startsWith('${TODO')) {
     payload.miniprogram = {
