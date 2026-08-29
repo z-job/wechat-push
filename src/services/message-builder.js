@@ -157,7 +157,7 @@ async function buildMessagePayload(user, config, templateConfig) {
         color: colors.pharmacy_fact
       },
       remark: {
-        value: remarkMessage,
+        value: `━━━━━━━━━━━━━━━\n${remarkMessage}`,
         color: colors.remark
       }
     }
