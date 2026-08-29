@@ -61,22 +61,13 @@ module.exports = {
       horoscopeName: '双鱼座',
       firstText: '🌸 早安，小宝宝~ 今天也要元气满满哦！',
       remarkText: '💕 大宝宝每天都在想你～',
-      festivals: [
-        {
-          type: 'Birthday',
-          name: '小宝宝阳历生日',
-          year: '2003',
-          date: '03-08',
-          isLunar: false
-        },
-        {
-          type: 'Birthday',
-          name: '大宝宝阳历生日',
-          year: '2002',
-          date: '11-20',
-          isLunar: false
-        }
-      ],
+      // 小宝宝端倒数：大宝宝农历十月十六生日
+      targetBirthday: {
+        name: '大宝宝',
+        date: '10-16',
+        isLunar: true,
+        label: '大宝宝农历生日'
+      },
       customizedDateList: [
         { keyword: 'love_day', date: '2025-04-06' }, // 恋爱纪念日
       ]
@@ -92,22 +83,13 @@ module.exports = {
       horoscopeName: '天蝎座',
       firstText: '🌸 早安，大宝宝~ 今天科研和生活都要顺遂哦！',
       remarkText: '💕 小宝宝和小窝时刻陪伴着你～',
-      festivals: [
-        {
-          type: 'Birthday',
-          name: '大宝宝阳历生日',
-          year: '2002',
-          date: '11-20',
-          isLunar: false
-        },
-        {
-          type: 'Birthday',
-          name: '小宝宝阳历生日',
-          year: '2003',
-          date: '03-08',
-          isLunar: false
-        }
-      ],
+      // 大宝宝端倒数：小宝宝阳历3月8日生日
+      targetBirthday: {
+        name: '小宝宝',
+        date: '03-08',
+        isLunar: false,
+        label: '小宝宝阳历生日'
+      },
       customizedDateList: [
         { keyword: 'love_day', date: '2025-04-06' }, // 恋爱纪念日
       ]

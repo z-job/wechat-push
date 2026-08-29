@@ -12,7 +12,22 @@ const { getQuotes } = require('../api/quote');
 async function buildMessagePayload(user, config, templateConfig) {
   const { dateStr, weekDayStr } = getFormattedDate();
   const loveDays = getLoveDays(user.customizedDateList?.[0]?.date || '2025-04-06');
-  const birthdayDays = getDaysUntilNextDate(user.horoscopeDate || (user.name === '大宝宝' ? '11-20' : '03-08'));
+
+  // 计算对方生日倒数 (小宝宝端倒数大宝宝农历10-16；大宝宝端倒数小宝宝阳历03-08)
+  const targetBday = user.targetBirthday || (
+    user.name === '小宝宝'
+      ? { name: '大宝宝', date: '10-16', isLunar: true }
+      : { name: '小宝宝', date: '03-08', isLunar: false }
+  );
+
+  const birthdayDays = getDaysUntilNextDate(targetBday.date, targetBday.isLunar);
+
+  let birthdayMsg = '';
+  if (birthdayDays === 0) {
+    birthdayMsg = `🎉 祝${targetBday.name}今天生日快乐！🎂✨`;
+  } else {
+    birthdayMsg = `距离${targetBday.name}生日还有 【 ${birthdayDays} 】 天`;
+  }
 
   // 获取天气数据 (优先彩云天气高精度气象源)
   const weatherData = await getWeather(user.city || (user.name === '大宝宝' ? '天津' : '大名'), {
@@ -56,15 +71,6 @@ async function buildMessagePayload(user, config, templateConfig) {
     remarkMessage = user.name === '大宝宝'
       ? '💕 小宝宝和小窝时刻陪伴着你～'
       : '💕 大宝宝每天都在想你～';
-  }
-
-  let birthdayMsg = '';
-  if (birthdayDays === 0) {
-    birthdayMsg = `🎉 祝${user.name}今天生日快乐！🎂✨`;
-  } else {
-    birthdayMsg = user.name === '大宝宝'
-      ? `距离大宝宝生日还有 【 ${birthdayDays} 】 天`
-      : `还有 【 ${birthdayDays} 】 天`;
   }
 
   const fullFormattedCardText = [
