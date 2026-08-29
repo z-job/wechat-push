@@ -66,6 +66,7 @@ module.exports = {
         name: '大宝宝',
         date: '10-16',
         isLunar: true,
+        dateDisplay: '十月十六',
         label: '大宝宝农历生日'
       },
       customizedDateList: [
@@ -88,6 +89,7 @@ module.exports = {
         name: '小宝宝',
         date: '03-08',
         isLunar: false,
+        dateDisplay: '3月8日',
         label: '小宝宝阳历生日'
       },
       customizedDateList: [

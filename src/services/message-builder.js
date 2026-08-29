@@ -16,8 +16,8 @@ async function buildMessagePayload(user, config, templateConfig) {
   // 计算对方生日倒数 (小宝宝端倒数大宝宝农历10-16；大宝宝端倒数小宝宝阳历03-08)
   const targetBday = user.targetBirthday || (
     user.name === '小宝宝'
-      ? { name: '大宝宝', date: '10-16', isLunar: true }
-      : { name: '小宝宝', date: '03-08', isLunar: false }
+      ? { name: '大宝宝', date: '10-16', isLunar: true, dateDisplay: '十月十六' }
+      : { name: '小宝宝', date: '03-08', isLunar: false, dateDisplay: '3月8日' }
   );
 
   const birthdayDays = getDaysUntilNextDate(targetBday.date, targetBday.isLunar);
@@ -26,7 +26,8 @@ async function buildMessagePayload(user, config, templateConfig) {
   if (birthdayDays === 0) {
     birthdayMsg = `🎉 祝${targetBday.name}今天生日快乐！🎂✨`;
   } else {
-    birthdayMsg = `距离${targetBday.name}生日还有 【 ${birthdayDays} 】 天`;
+    const displayDate = targetBday.dateDisplay || (targetBday.isLunar ? '十月十六' : '3月8日');
+    birthdayMsg = `距离${targetBday.name}生日${displayDate}还有 【 ${birthdayDays} 】 天`;
   }
 
   // 获取天气数据 (优先彩云天气高精度气象源)
