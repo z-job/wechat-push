@@ -20,9 +20,8 @@ module.exports = {
   KAOYAN_DATE: process.env.KAOYAN_DATE || '12-19', // 考研初试日期（12月19日）
 
   // ============ 小程序联动配置 ============
-  // 小程序已正式审核发布上线，开启模板卡片原生无缝直跳
   MINIPROGRAM: {
-    enable: true, // ✅ 正式上线后开启原生直跳
+    enable: false, // 当前小程序处于备案审核阶段，保持 false 确保消息毫秒级直发
     appid: process.env.MINIPROGRAM_APPID || 'wx0744350fe50decee',
     pagepath: 'pages/MainPage/index'
   },
