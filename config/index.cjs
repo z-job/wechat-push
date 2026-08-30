@@ -20,10 +20,9 @@ module.exports = {
   KAOYAN_DATE: process.env.KAOYAN_DATE || '12-19', // 考研初试日期（12月19日）
 
   // ============ 小程序联动配置 ============
-  // 微信测试号官方规则：只有全网公开发布上线的小程序才支持模板卡片跳转。
-  // 作为情侣私密体验版小程序，建议保持 false，直接通过微信下拉列表使用更安全。
+  // 小程序已正式审核发布上线，开启模板卡片原生无缝直跳
   MINIPROGRAM: {
-    enable: false, // 私密体验版小程序请保持 false
+    enable: true, // ✅ 正式上线后开启原生直跳
     appid: process.env.MINIPROGRAM_APPID || 'wx0744350fe50decee',
     pagepath: 'pages/MainPage/index'
   },

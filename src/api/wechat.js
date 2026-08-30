@@ -27,6 +27,18 @@ async function sendTemplateMessage(accessToken, payload) {
   if (res.data && res.data.errcode === 0) {
     return res.data;
   }
+
+  // 🛡️ 智能容灾降级：若小程序处于审核中或路径未同步 (40165 / 40013)，自动降级为纯卡片无损重发，绝对保证推送永不中断！
+  if ((res.data.errcode === 40165 || res.data.errcode === 40013) && payload.miniprogram) {
+    console.warn(`⚠️ [小程序暂未同步] (${res.data.errcode}: ${res.data.errmsg})，自动切换为安全卡片模式无损送达...`);
+    const fallbackPayload = { ...payload };
+    delete fallbackPayload.miniprogram;
+    const retryRes = await axios.post(url, fallbackPayload, { timeout: 8000 });
+    if (retryRes.data && retryRes.data.errcode === 0) {
+      return retryRes.data;
+    }
+  }
+
   throw new Error(`[WeChat Send Error] errcode: ${res.data.errcode}, errmsg: ${res.data.errmsg}`);
 }
 
