@@ -14,8 +14,10 @@
  * 
  * 📅 日期：{{date.DATA}}
  * 🌤 天气：{{weather.DATA}}
+ * 🌡 气温：{{min_temperature.DATA}} ~ {{max_temperature.DATA}}
  * 💨 风向：{{wind_direction.DATA}} {{wind_scale.DATA}}
  * 🌊 湿度：{{shidu.DATA}}
+ * ☀️ 紫外线：{{ultraviolet.DATA}}
  * 
  * ❤️ 恋爱天数：{{love_day.DATA}}
  * 🎂 距离生日：{{birthday_message.DATA}}
@@ -47,8 +49,10 @@ const TEMPLATE_CONFIG = [
       wind_direction:  '#00B0FF',  // 晴空亮蓝
       wind_scale:      '#00E676',  // 鲜明翠绿 (风力突出)
       shidu:           '#00B4D8',  // 清澈湖蓝 (湿度醒目)
+      ultraviolet:     '#FFA000',  // 晴阳琥珀金 (紫外线醒目)
       love_day:        '#FF0055',  // 醒目高亮热恋红 (核心数字极度吸睛)
       birthday_message:'#FF8F00',  // 璀璨亮金橙 (倒数天数吸睛)
+      kaoyan_day:      '#FF8F00',  // 璀璨亮金橙 (考研倒计时吸睛)
       horoscope_all:   '#AB47BC',  // 亮紫罗兰 (运势醒目)
       saylove:         '#E91E63',  // 亮丽蜜桃粉 (情话突出)
       caihongpi:       '#FF6D00',  // 亮珊瑚橙 (夸赞醒目)

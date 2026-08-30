@@ -106,29 +106,49 @@ function kmphToScale(kmph) {
   return '6级以上';
 }
 
+/**
+ * 紫外线 4 档强度与专属防晒建议映射
+ * 1档: 弱 -> 弱 ｜ 不需要防晒
+ * 2档: 中等 -> 中等 ｜ 轻度防晒
+ * 3档: 强 -> 强 ｜ 正常防晒
+ * 4档: 很强/极强 -> 极强 ｜ 重度防晒
+ * @param {string|number} rawUV
+ * @returns {string}
+ */
+function getUVAdvice(rawUV) {
+  if (!rawUV) return '弱 ｜ 不需要防晒';
+  const text = String(rawUV).trim();
+  const num = parseInt(text, 10);
+
+  if (!isNaN(num)) {
+    if (num <= 2) return '弱 ｜ 不需要防晒';
+    if (num === 3) return '中等 ｜ 轻度防晒';
+    if (num === 4) return '强 ｜ 正常防晒';
+    if (num >= 5) return '极强 ｜ 重度防晒';
+  }
+
+  if (text.includes('极强') || text.includes('很强') || text.includes('重度') || text.includes('高危')) {
+    return '极强 ｜ 重度防晒';
+  } else if (text.includes('强')) {
+    return '强 ｜ 正常防晒';
+  } else if (text.includes('中等') || text.includes('中')) {
+    return '中等 ｜ 轻度防晒';
+  } else if (text.includes('弱') || text.includes('最弱') || text.includes('微弱') || text.includes('无')) {
+    return '弱 ｜ 不需要防晒';
+  }
+
+  return `${text} ｜ 正常防晒`;
+}
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/**
- * 获取指定城市的天气预报
- * 优先调用彩云天气高精度 API，备用天行数据 API，底层 wttr.in 与本地兜底
- * @param {string} city - 城市名称，如 "大名" 或 "天津"
- * @param {object|string} options - 配置参数对象或天行 API Key
- * @returns {Promise<object>}
- */
+// ==================== 核心获取天气函数 ====================
 async function getWeather(city = '大名', options = {}) {
-  let caiyunToken = '';
-  let tianApiKey = '';
+  const { caiyunToken, tianApiKey } = options;
 
-  if (typeof options === 'string') {
-    tianApiKey = options;
-  } else if (options && typeof options === 'object') {
-    caiyunToken = options.caiyunToken || '';
-    tianApiKey = options.tianApiKey || '';
-  }
-
-  // 尝试 1: 彩云天气开放平台 API (最高精度、自然语言短评、分钟级降水)
+  // 尝试 1: 彩云天气开放平台 API (最高精度、自然语言短评、分钟级降水、紫外线)
   if (caiyunToken && !caiyunToken.startsWith('${TODO')) {
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
@@ -157,6 +177,9 @@ async function getWeather(city = '大名', options = {}) {
             (weatherDesc && weatherDesc.includes('雨')) ||
             (keypoint && keypoint.includes('雨'));
 
+          const uvRaw = daily.life_index?.ultraviolet?.[0]?.desc || realtime.life_index?.ultraviolet?.desc || '弱';
+          const uvAdvice = getUVAdvice(uvRaw);
+
           return {
             weather: `${weatherDesc}\n气温：${minTemp}度 ~ ${maxTemp}度`,
             weather_desc: weatherDesc,
@@ -167,9 +190,9 @@ async function getWeather(city = '大名', options = {}) {
             shidu: humidity,
             keypoint: keypoint,
             has_rain: !!hasRain,
+            ultraviolet: uvAdvice,
             comfort: daily.life_index?.comfort?.[0]?.desc || '舒适',
-            dressing: daily.life_index?.dressing?.[0]?.desc || '适宜',
-            ultraviolet: daily.life_index?.ultraviolet?.[0]?.desc || '中等'
+            dressing: daily.life_index?.dressing?.[0]?.desc || '适宜'
           };
         }
       } catch (e) {
@@ -199,6 +222,7 @@ async function getWeather(city = '大名', options = {}) {
         const maxNum = r.highest ? r.highest.replace(/[^0-9-]/g, '') : '28';
         const weatherDesc = r.weather || '晴 ☀️';
         const hasRain = weatherDesc.includes('雨') || (r.tips && r.tips.includes('雨'));
+        const uvRaw = r.tips || r.uv || '弱';
         return {
           weather: `${weatherDesc}\n气温：${minNum}度 ~ ${maxNum}度`,
           weather_desc: weatherDesc,
@@ -207,7 +231,8 @@ async function getWeather(city = '大名', options = {}) {
           wind_direction: r.wind || '微风',
           wind_scale: r.windsc || '1-2级',
           shidu: r.humidity || '45%',
-          has_rain: !!hasRain
+          has_rain: !!hasRain,
+          ultraviolet: getUVAdvice(uvRaw)
         };
       }
     } catch (e) {
@@ -230,6 +255,7 @@ async function getWeather(city = '大名', options = {}) {
       const windDir = WTTR_WIND_DIR_MAP[current.winddir16Point] || `${current.winddir16Point}风`;
       const windSc = kmphToScale(current.windspeedKmph);
       const hasRain = rawWeather.toLowerCase().includes('rain') || weatherText.includes('雨');
+      const uvIndex = today.uvIndex || '2';
 
       return {
         weather: `${weatherText}\n气温：${today.mintempC}度 ~ ${today.maxtempC}度`,

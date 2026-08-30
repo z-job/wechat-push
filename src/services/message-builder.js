@@ -49,6 +49,7 @@ async function buildMessagePayload(user, config, templateConfig) {
     wind_direction: '#00B0FF', // 晴空亮蓝
     wind_scale: '#00E676',     // 鲜明翠绿
     shidu: '#00B4D8',          // 清澈湖蓝
+    ultraviolet: '#FFA000',    // 晴阳琥珀金 (紫外线醒目)
     love_day: '#FF0055',       // 醒目高亮热恋红
     birthday_message: '#FF8F00', // 璀璨亮金橙
     horoscope_all: '#AB47BC',  // 亮紫罗兰
@@ -93,8 +94,9 @@ async function buildMessagePayload(user, config, templateConfig) {
   const fullFormattedCardText = [
     `📅 日期：${dateStr} ${weekDayStr}`,
     `🌤 天气：${weatherDisplay}`,
-    `气温：${weatherData.min_temp} ~ ${weatherData.max_temp}`,
+    `🌡 气温：${weatherData.min_temp} ~ ${weatherData.max_temp}`,
     `💨 风向：${weatherData.wind_direction} ${weatherData.wind_scale} ｜ 湿度：${weatherData.shidu}`,
+    `☀️ 紫外线：${weatherData.ultraviolet || '弱 ｜ 不需要防晒'}`,
     ``,
     `❤️ 恋爱天数：【 ${loveDays} 天 】`,
     `🎂 距离生日：${birthdayMsg}`,
@@ -130,8 +132,12 @@ async function buildMessagePayload(user, config, templateConfig) {
         color: colors.weather
       },
       weather: {
-        value: `${weatherDisplay}\n气温：${weatherData.min_temp} ~ ${weatherData.max_temp}`,
+        value: weatherDisplay,
         color: colors.weather
+      },
+      temperature: {
+        value: `${weatherData.min_temp} ~ ${weatherData.max_temp}`,
+        color: colors.min_temperature
       },
       min_temperature: {
         value: `${weatherData.min_temp}`,
@@ -152,6 +158,10 @@ async function buildMessagePayload(user, config, templateConfig) {
       shidu: {
         value: `${weatherData.shidu}`,
         color: colors.shidu
+      },
+      ultraviolet: {
+        value: weatherData.ultraviolet || '弱 ｜ 不需要防晒',
+        color: colors.ultraviolet
       },
       love_day: {
         value: `【 ${loveDays} 天 】`,
