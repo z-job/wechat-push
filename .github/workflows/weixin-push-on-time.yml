@@ -28,13 +28,4 @@ jobs:
         run: npm install
 
       - name: Execute Push Script
-        env:
-          APP_ID: ${{ secrets.APP_ID }}
-          APP_SECRET: ${{ secrets.APP_SECRET }}
-          CAIYUN_TOKEN: ${{ secrets.CAIYUN_TOKEN }}
-          TIAN_API_KEY: ${{ secrets.TIAN_API_KEY }}
-          TARGET_USER_OPENID: ${{ secrets.TARGET_USER_OPENID }}
-          ADMIN_USER_OPENID: ${{ secrets.ADMIN_USER_OPENID }}
-          TEMPLATE_ID: ${{ secrets.TEMPLATE_ID }}
-          MINIPROGRAM_APPID: ${{ secrets.MINIPROGRAM_APPID }}
         run: npm run start
