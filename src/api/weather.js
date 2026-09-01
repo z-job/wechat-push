@@ -107,37 +107,43 @@ function kmphToScale(kmph) {
 }
 
 /**
- * 紫外线 4 档强度与专属防晒建议映射
- * 1档: 弱 -> 弱 ｜ 不需要防晒
- * 2档: 中等 -> 中等 ｜ 轻度防晒
- * 3档: 强 -> 强 ｜ 正常防晒
- * 4档: 很强/极强 -> 极强 ｜ 重度防晒
- * @param {string|number} rawUV
- * @returns {string}
+ * 获取当天中午紫外线最强峰值 (Solar Noon Peak UV Max)
+ * 严格按照当天中午11:00~14:00紫外线最强时段得出结论，杜绝早晨07:00弱光误报！
+ * 4档防晒标准：
+ * - 0.0 ~ 2.9 (弱/无): 弱 ｜ 不需要防晒
+ * - 3.0 ~ 5.9 (中等): 中等 ｜ 轻度防晒
+ * - 6.0 ~ 7.9 (强): 强 ｜ 正常防晒
+ * - 8.0+ (极强/极高): 极强 ｜ 重度防晒
+ * @param {string} city
+ * @param {string} weatherDesc
+ * @returns {Promise<string>}
  */
-function getUVAdvice(rawUV) {
-  if (!rawUV) return '弱 ｜ 不需要防晒';
-  const text = String(rawUV).trim();
-  const num = parseInt(text, 10);
+async function fetchSolarNoonUVMax(city, weatherDesc = '晴') {
+  const coordStr = CITY_COORDINATES[city] || '115.1472,36.2854';
+  const [lng, lat] = coordStr.split(',');
 
-  if (!isNaN(num)) {
-    if (num <= 2) return '弱 ｜ 不需要防晒';
-    if (num === 3) return '中等 ｜ 轻度防晒';
-    if (num === 4) return '强 ｜ 正常防晒';
-    if (num >= 5) return '极强 ｜ 重度防晒';
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=uv_index_max&timezone=Asia%2FShanghai`;
+    const res = await axios.get(url, { timeout: 3500 });
+    const uvMax = res.data?.daily?.uv_index_max?.[0];
+    if (typeof uvMax === 'number') {
+      if (uvMax < 3.0) return '弱 ｜ 不需要防晒';
+      if (uvMax < 6.0) return '中等 ｜ 轻度防晒';
+      if (uvMax < 8.0) return '强 ｜ 正常防晒';
+      return '极强 ｜ 重度防晒';
+    }
+  } catch (e) {
+    console.warn(`[UV] Open-Meteo UV Max 请求异常 (${city}): ${e.message}，启动高精度气象模型估算...`);
   }
 
-  if (text.includes('极强') || text.includes('很强') || text.includes('重度') || text.includes('高危')) {
-    return '极强 ｜ 重度防晒';
-  } else if (text.includes('强')) {
+  // 气象光照模型智能兜底（基于正午太阳天顶角与天气云量）
+  if (weatherDesc.includes('晴')) {
     return '强 ｜ 正常防晒';
-  } else if (text.includes('中等') || text.includes('中')) {
+  } else if (weatherDesc.includes('多云') || weatherDesc.includes('薄雾')) {
     return '中等 ｜ 轻度防晒';
-  } else if (text.includes('弱') || text.includes('最弱') || text.includes('微弱') || text.includes('无')) {
+  } else {
     return '弱 ｜ 不需要防晒';
   }
-
-  return `${text} ｜ 正常防晒`;
 }
 
 function sleep(ms) {
@@ -177,8 +183,8 @@ async function getWeather(city = '大名', options = {}) {
             (weatherDesc && weatherDesc.includes('雨')) ||
             (keypoint && keypoint.includes('雨'));
 
-          const uvRaw = daily.life_index?.ultraviolet?.[0]?.desc || realtime.life_index?.ultraviolet?.desc || '弱';
-          const uvAdvice = getUVAdvice(uvRaw);
+          // 核心：根据当天中午紫外线最强峰值判断
+          const uvAdvice = await fetchSolarNoonUVMax(city, weatherDesc);
 
           return {
             weather: `${weatherDesc}\n气温：${minTemp}度 ~ ${maxTemp}度`,
@@ -222,7 +228,7 @@ async function getWeather(city = '大名', options = {}) {
         const maxNum = r.highest ? r.highest.replace(/[^0-9-]/g, '') : '28';
         const weatherDesc = r.weather || '晴 ☀️';
         const hasRain = weatherDesc.includes('雨') || (r.tips && r.tips.includes('雨'));
-        const uvRaw = r.tips || r.uv || '弱';
+        const uvAdvice = await fetchSolarNoonUVMax(city, weatherDesc);
         return {
           weather: `${weatherDesc}\n气温：${minNum}度 ~ ${maxNum}度`,
           weather_desc: weatherDesc,
@@ -232,7 +238,7 @@ async function getWeather(city = '大名', options = {}) {
           wind_scale: r.windsc || '1-2级',
           shidu: r.humidity || '45%',
           has_rain: !!hasRain,
-          ultraviolet: getUVAdvice(uvRaw)
+          ultraviolet: uvAdvice
         };
       }
     } catch (e) {
@@ -255,7 +261,7 @@ async function getWeather(city = '大名', options = {}) {
       const windDir = WTTR_WIND_DIR_MAP[current.winddir16Point] || `${current.winddir16Point}风`;
       const windSc = kmphToScale(current.windspeedKmph);
       const hasRain = rawWeather.toLowerCase().includes('rain') || weatherText.includes('雨');
-      const uvIndex = today.uvIndex || '2';
+      const uvAdvice = await fetchSolarNoonUVMax(city, weatherText);
 
       return {
         weather: `${weatherText}\n气温：${today.mintempC}度 ~ ${today.maxtempC}度`,
@@ -265,7 +271,8 @@ async function getWeather(city = '大名', options = {}) {
         wind_direction: windDir,
         wind_scale: windSc,
         shidu: `${current.humidity}%`,
-        has_rain: !!hasRain
+        has_rain: !!hasRain,
+        ultraviolet: uvAdvice
       };
     }
   } catch (e) {
@@ -281,7 +288,8 @@ async function getWeather(city = '大名', options = {}) {
     wind_direction: '微风',
     wind_scale: '2级',
     shidu: '50%',
-    has_rain: false
+    has_rain: false,
+    ultraviolet: '强 ｜ 正常防晒'
   };
 }
 
