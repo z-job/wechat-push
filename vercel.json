@@ -1,12 +1,16 @@
-﻿{
+{
   "version": 2,
   "builds": [
     {
-      "src": "api/wechat.js",
+      "src": "api/*.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "/api/push",
+      "dest": "api/push.js"
+    },
     {
       "src": "/api/wechat",
       "dest": "api/wechat.js"
