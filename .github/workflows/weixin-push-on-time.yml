@@ -1,14 +1,8 @@
 name: 'Weixin Push On Time (朝勃 × 小宝宝)'
 
 on:
-  push:
-    branches:
-      - master
-      - main
-  schedule:
-    # 采用 UTC 时间: 每天 UTC 22:45 触发 = 北京时间 (UTC+8) 次日清晨 06:45（避开高峰提前预热）
-    - cron: '45 22 * * *'
-  # 支持在 GitHub 网页 Actions 页面手动点击触发测试
+  # 仅通过 cron-job.org 外部精准定时唤醒或 GitHub 网页手动点击触发
+  # 彻底移除了 GitHub 内部延迟严重的 schedule 定时器，杜绝 08:40 二次重复推送！
   workflow_dispatch:
 
 jobs:
@@ -28,4 +22,7 @@ jobs:
         run: npm install
 
       - name: Execute Push Script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TZ: 'Asia/Shanghai'
         run: npm run start

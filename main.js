@@ -1,7 +1,57 @@
+process.env.TZ = 'Asia/Shanghai';
+
+const axios = require('axios');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Shanghai');
+
 const config = require('./config/index.cjs');
 const templateConfigList = require('./config/template-config.cjs');
 const { getAccessToken, sendTemplateMessage } = require('./src/api/wechat');
 const { buildMessagePayload } = require('./src/services/message-builder');
+
+/**
+ * 检查当天是否已经成功推送过早安提醒 (单日唯一防重锁)
+ * 结合 GitHub Actions Runs API，杜绝任何迟到队列、重复触发导致的一天发送两次！
+ * @returns {Promise<boolean>}
+ */
+async function checkAlreadyPushedToday() {
+  const token = process.env.GITHUB_TOKEN;
+  const repo = process.env.GITHUB_REPOSITORY;
+  // 本地运行或无 token 环境不限制
+  if (!token || !repo) return false;
+
+  try {
+    const res = await axios.get(`https://api.github.com/repos/${repo}/actions/runs?status=success&per_page=15`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'wechat-push-chaobo'
+      },
+      timeout: 4000
+    });
+
+    const todayBJ = dayjs().tz('Asia/Shanghai').format('YYYY-MM-DD');
+    const successfulRunsToday = (res.data?.workflow_runs || []).filter(run => {
+      const runDateBJ = dayjs(run.created_at).tz('Asia/Shanghai').format('YYYY-MM-DD');
+      return runDateBJ === todayBJ && run.conclusion === 'success';
+    });
+
+    if (successfulRunsToday.length > 0) {
+      console.log(`\n🛡️ [防重保险触发] 检测到今日 (${todayBJ}) 已成功完成过早安推送！`);
+      console.log(`🚫 坚决执行“一天仅推一条”，自动拦截本次重复触发，不打扰小宝宝～`);
+      return true;
+    }
+  } catch (e) {
+    console.warn(`[PushLock] 防重记录检查微异常 (${e.message})，按正常流程执行推送。`);
+  }
+
+  return false;
+}
 
 /**
  * 智能预热与定点毫秒级开火引擎
@@ -60,6 +110,12 @@ async function main() {
 
   // 0. 检查是否需要精准等待至 07:10:00
   await waitUntilTargetTime(7, 10);
+
+  // 0.1 单日唯一防重锁检查：今日已推则直接安全退出
+  const alreadyPushed = await checkAlreadyPushedToday();
+  if (alreadyPushed) {
+    process.exit(0);
+  }
 
   // 1. 检查必要凭据
   if (!config.APP_ID || config.APP_ID.startsWith('${TODO') || !config.APP_SECRET || config.APP_SECRET.startsWith('${TODO')) {
